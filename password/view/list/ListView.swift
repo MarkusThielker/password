@@ -16,7 +16,7 @@ struct ListView: View {
         NavigationView {
             List {
                 ForEach(viewModel.passwords) { password in
-                    NavigationLink(destination: Text(password.name)) {
+                    NavigationLink(destination: DetailView(password: password)) {
                         Text(password.name)
                     }
                 }
