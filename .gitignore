@@ -1,0 +1,16 @@
+# Xcode
+.xcworkspace/
+xcuserdata/
+UserInterfaceState.xcuserstate
+project.xcworkspace/
+*.xcuserdatad/
+*.xccheckout
+xcshareddata/
+*.moved-aside
+DerivedData
+.DS_Store
+*.hmap
+
+# macOS
+build/
+*.app

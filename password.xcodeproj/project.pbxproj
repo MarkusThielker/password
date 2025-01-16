@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		284390B42D387B9000B4D364 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 284390B32D387B8A00B4D364 /* .gitignore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		284390632D3874C600B4D364 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +31,7 @@
 		2843904F2D3874C500B4D364 /* password.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = password.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		284390622D3874C600B4D364 /* passwordTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = passwordTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2843906C2D3874C600B4D364 /* passwordUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = passwordUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		284390B32D387B8A00B4D364 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +80,7 @@
 		284390462D3874C500B4D364 = {
 			isa = PBXGroup;
 			children = (
+				284390B32D387B8A00B4D364 /* .gitignore */,
 				284390512D3874C500B4D364 /* password */,
 				284390652D3874C600B4D364 /* passwordTests */,
 				2843906F2D3874C600B4D364 /* passwordUITests */,
@@ -212,6 +218,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				284390B42D387B9000B4D364 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
