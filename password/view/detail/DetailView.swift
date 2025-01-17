@@ -10,10 +10,12 @@ import SwiftUI
 struct DetailView: View {
     
     let password: Password
+    let passwordKC: PasswordKC
+    
     @State var value: String = ""
 
     func validateInput(input: String, password: Password) -> Bool {
-        return input == password.value
+        return input == passwordKC.value
     }
     
     var body: some View {
@@ -47,6 +49,7 @@ struct DetailView: View {
 }
 
 #Preview {
-    let password = Password(name: "macbook", value: "password")
-    DetailView(password: password)
+    let password = Password(name: "macbook")
+    let passwordKC = PasswordKC(id: password.id, value: "admin")
+    DetailView(password: password, passwordKC: passwordKC)
 }

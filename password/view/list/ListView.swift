@@ -6,17 +6,21 @@
 //
 
 import SwiftUI
+import _SwiftData_SwiftUI
 
 struct ListView: View {
     
     @ObservedObject var viewModel: ListViewModel
     @State var isAddingPassword: Bool = false
-    
+
     var body: some View {
         NavigationView {
             List {
                 ForEach(viewModel.passwords) { password in
-                    NavigationLink(destination: DetailView(password: password)) {
+                    NavigationLink(destination: DetailView(
+                        password: password,
+                        passwordKC: viewModel.getPasswordKeychain(withID: password.id)!
+                    )) {
                         Text(password.name)
                     }
                 }
@@ -28,7 +32,7 @@ struct ListView: View {
                         .frame(width: 20, height: 20)
                 }
                 Button(action: {
-                    viewModel.loadAllPasswords()
+                    viewModel.getAllPasswords()
                 }) {
                     Image(systemName: "arrow.trianglehead.clockwise")
                         .imageScale(.medium)
@@ -41,11 +45,15 @@ struct ListView: View {
             AddPasswordView(viewModel: viewModel)
         }
         .onAppear {
-            viewModel.loadAllPasswords()
+            viewModel.getAllPasswords()
         }
     }
 }
 
 #Preview {
-    ListView(viewModel: .init())
+    
+    @Previewable
+    @Environment(\.modelContext) var context
+
+    ListView(viewModel: .init(context: context))
 }

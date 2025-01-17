@@ -49,7 +49,7 @@ struct passwordApp: App {
         WindowGroup {
             VStack {
                 if isAuthenticated {
-                    ListView(viewModel: ListViewModel())
+                    ContextWrapper()
                 } else {
                     Button("Authenticate") {
                         authenticate()
@@ -60,5 +60,15 @@ struct passwordApp: App {
                 authenticate()
             }
         }
+        .modelContainer(for: [Password.self])
+    }
+}
+
+struct ContextWrapper: View {
+    
+    @Environment(\.modelContext) var context
+    
+    var body: some View {
+        ListView(viewModel: ListViewModel(context: context))
     }
 }

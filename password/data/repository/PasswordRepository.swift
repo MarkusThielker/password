@@ -2,120 +2,74 @@
 //  PasswordRepository.swift
 //  password
 //
-//  Created by Markus Thielker on 16.01.25.
+//  Created by Markus Thielker on 17.01.25.
 //
 
 import Foundation
-import Security
+import SwiftUICore
+import SwiftData
 
-enum KeychainError: Error {
-    case unknown
-    case duplicateItem
-    case itemNotFound
-    case unexpectedPasswordData
+enum PasswordRepositoryError: Error {
+    case notFound
 }
 
-protocol PasswordRepository {
-    func getAllPasswords() -> [Password]
-    func getPassword(withID id: UUID) -> Password?
-    func savePassword(_ password: Password) throws
-    func deletePassword(withID id: UUID) throws
-}
-
-class KeychainPasswordRepository: PasswordRepository {
+class PasswordRepository {
     
-    private let serviceName = "dev.thielker.password"
-
+    private let context: ModelContext
+    
+    init(_ context: ModelContext) {
+        self.context = context
+    }
+    
+    @MainActor
     func getAllPasswords() -> [Password] {
         
-        // TODO: fix query to work with 'kSecMatchLimit as String: kSecMatchLimitAll'
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: serviceName,
-            kSecMatchLimit as String: 100,
-            kSecReturnAttributes as String: true,
-            kSecReturnData as String: true,
-        ]
+        print("fetching passwords")
 
-        var result: AnyObject?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
-
-        if status != errSecSuccess {
-            print("Error retrieving passwords: \(SecCopyErrorMessageString(status, nil) ?? "Unknown error" as CFString)")
-            return []
-        }
-
-        guard let items = result as? [[String: Any]] else {
-            print("No passwords found.")
-            return []
-        }
-        
         var passwords: [Password] = []
-        for item in items {
-            if let data = item[kSecValueData as String] as? Data,
-               let password = try? JSONDecoder().decode(Password.self, from: data) {
-                passwords.append(password)
-            }
+        do {
+            
+            let request = FetchDescriptor<Password>()
+            passwords = try context.fetch(request)
+            
+            print("found \(passwords.count) passwords")
+            
+        } catch {
+            print("fetching password failed: \(error)")
         }
+
         return passwords
     }
     
+    @MainActor
     func getPassword(withID id: UUID) -> Password? {
         
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: serviceName,
-            kSecAttrAccount as String: id.uuidString,
-            kSecReturnData as String: true
-        ]
-
-        var result: AnyObject?
-        SecItemCopyMatching(query as CFDictionary, &result)
-
-        guard let data = result as? Data,
-              let password = try? JSONDecoder().decode(Password.self, from: data) else {
-            return nil
+        print("fetching password with id \(id)")
+        
+        var password: Password?
+        do {
+            
+            let request = FetchDescriptor<Password>(predicate: #Predicate { $0.id == id })
+            password = try context.fetch(request).first
+        
+            print("found password: \(password == nil)")
+            
+        } catch {
+            print("fetching password failed: \(error)")
         }
         
         return password
     }
     
-    func savePassword(_ password: Password) throws {
-
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword, // Generic password item
-            kSecAttrService as String: serviceName, // Service name for your app
-            kSecAttrAccount as String: password.id.uuidString, // Unique identifier
-            kSecValueData as String: try JSONEncoder().encode(password) // Encode password data
-        ]
-
-        let status = SecItemAdd(query as CFDictionary, nil)
-
-        guard status == errSecSuccess else {
-            if status == errSecDuplicateItem {
-                throw KeychainError.duplicateItem
-            } else {
-                throw KeychainError.unknown
-            }
-        }
+    @MainActor
+    func createPassword(_ password: Password) {
+        context.insert(password)
+        print("inserted password \(password.name)")
     }
     
-    func deletePassword(withID id: UUID) throws {
-        
-        let query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: serviceName,
-            kSecAttrAccount as String: id.uuidString
-        ]
-
-        let status = SecItemDelete(query as CFDictionary)
-
-        guard status == errSecSuccess else {
-            if status == errSecItemNotFound {
-                throw KeychainError.itemNotFound
-            } else {
-                throw KeychainError.unknown
-            }
-        }
+    @MainActor
+    func deletePassword(_ password: Password) {
+        context.delete(password)
+        print("deleted password \(password.name)")
     }
 }

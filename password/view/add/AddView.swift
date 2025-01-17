@@ -31,7 +31,7 @@ struct AddPasswordView: View {
                     .font(.footnote)
                 HStack {
                     Button("Save") {
-                        viewModel.savePassword(name: name, value: value)
+                        viewModel.createPassword(name: name, value: value)
                         name = ""
                         value = ""
                         dismiss()
@@ -47,5 +47,9 @@ struct AddPasswordView: View {
 }
 
 #Preview {
-    AddPasswordView(viewModel: .init())
+    
+    @Previewable
+    @Environment(\.modelContext) var context
+    
+    AddPasswordView(viewModel: .init(context: context))
 }

@@ -6,48 +6,57 @@
 //
 
 import Foundation
+import SwiftData
 
 class ListViewModel: ObservableObject {
     
     @Published var passwords: [Password] = []
     
-    private let passwordRepository: PasswordRepository
+    private let context: ModelContext
+    private let passwordManager: PasswordManager
 
-    init(passwordRepository: PasswordRepository = KeychainPasswordRepository()) {
-        self.passwordRepository = passwordRepository
-        loadAllPasswords()
+    @MainActor
+    init(context: ModelContext) {
+        self.context = context
+        
+        let passwordRepository = PasswordRepository(context)
+        let passwordKeychainRepository = PasswordKeychainRepository()
+        
+        self.passwordManager = PasswordManager(
+            context: context,
+            passwordRepository: passwordRepository,
+            passwordKeychainRepository: passwordKeychainRepository
+        )
+        
+        passwords = getAllPasswords()
     }
     
-    func loadAllPasswords() {
-        passwords = passwordRepository.getAllPasswords()
+    @MainActor
+    func getAllPasswords() -> [Password] {
+        return passwordManager.getAllPasswords()
     }
     
-    func loadPassword(withID id: UUID) -> Password? {
-        return passwordRepository.getPassword(withID: id)
+    @MainActor
+    func getPassword(withID id: UUID) -> Password? {
+        return passwordManager.getPassword(withID: id)
     }
     
-    func savePassword(name: String, value: String) {
-        let newPassword = Password(name: name, value: value)
-
-        do {
-
-            try passwordRepository.savePassword(newPassword)
-            print ("Saved password successfully")
-            loadAllPasswords()
-
-        } catch {
-            print("Error saving password: \(error)")
-            // TODO: display error to user
-        }
+    @MainActor
+    func getPasswordKeychain(withID id: UUID) -> PasswordKC? {
+        return passwordManager.getPasswordKeychain(withID: id)
     }
     
+    @MainActor
+    func createPassword(name: String, value: String) {
+        passwordManager.createPassword(name: name, value: value)
+        passwords = getAllPasswords()
+    }
+    
+    @MainActor
     func deletePassword(_ password: Password) {
-        do {
-            try passwordRepository.deletePassword(withID: password.id)
-            loadAllPasswords()
-        } catch {
-            print("Error deleting password: \(error)")
-            // TODO: display error to user
+        let success = passwordManager.deletePassword(password)
+        if success {
+            passwords = getAllPasswords()
         }
     }
 }
