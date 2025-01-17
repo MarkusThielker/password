@@ -60,7 +60,7 @@ struct passwordApp: App {
                 authenticate()
             }
         }
-        .modelContainer(for: [Password.self])
+        .modelContainer(for: [Password.self, PasswordAttempt.self])
     }
 }
 
