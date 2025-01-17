@@ -12,6 +12,7 @@ import SwiftData
 class PasswordManager {
     
     let passwordRepository: PasswordRepository
+    let passwordAttemptRepository: PasswordAttemptRepository
     let passwordKeychainRepository: PasswordKeychainRepository
     
     private let context: ModelContext
@@ -19,10 +20,12 @@ class PasswordManager {
     init(
         context: ModelContext,
         passwordRepository: PasswordRepository,
+        passwordAttemptRepository: PasswordAttemptRepository,
         passwordKeychainRepository: PasswordKeychainRepository
     ) {
         self.context = context
         self.passwordRepository = passwordRepository
+        self.passwordAttemptRepository = passwordAttemptRepository
         self.passwordKeychainRepository = passwordKeychainRepository
     }
     
@@ -38,6 +41,10 @@ class PasswordManager {
     
     func getPasswordKeychain(withID id: UUID) -> PasswordKC? {
         return passwordKeychainRepository.getPassword(withID: id)
+    }
+    
+    func getPasswordAttempts(passwordID id: UUID) -> [PasswordAttempt] {
+        return passwordAttemptRepository.getPasswordAttempts(passwordID: id)
     }
     
     @MainActor
@@ -66,6 +73,16 @@ class PasswordManager {
     }
     
     @MainActor
+    func createPasswordAttempt(passwordID: UUID, isSuccessful: Bool, typingTime: Double) {
+        let attempt = PasswordAttempt(
+            password: passwordID,
+            isSuccessful: isSuccessful,
+            typingTime: typingTime
+        )
+        passwordAttemptRepository.createPasswordAttempt(attempt: attempt)
+    }
+    
+    @MainActor
     func deletePassword(_ password: Password) -> Bool {
         
         print("deleting password \(password.name)")
@@ -76,6 +93,7 @@ class PasswordManager {
 
             try context.transaction {
                 passwordRepository.deletePassword(password)
+                try passwordAttemptRepository.deleteAllAttempts(withID: password.id)
                 try passwordKeychainRepository.deletePassword(withID: password.id)
             }
             

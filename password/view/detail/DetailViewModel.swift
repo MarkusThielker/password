@@ -8,16 +8,21 @@
 import Foundation
 import SwiftData
 
-class ListViewModel: ObservableObject {
-    
-    @Published var passwords: [Password] = []
+class DetailViewModel: ObservableObject {
+        
+    let passwordID: UUID
     
     private let context: ModelContext
     private let passwordManager: PasswordManager
+    
+    @Published var password: Password
+    @Published var passwordKC: PasswordKC
+    @Published var passwordAttempts: [PasswordAttempt]
 
     @MainActor
-    init(context: ModelContext) {
+    init(context: ModelContext, passwordID id: UUID) {
         self.context = context
+        self.passwordID = id
         
         let passwordRepository = PasswordRepository(context)
         let passwordAttemptRepository = PasswordAttemptRepository(context)
@@ -29,11 +34,10 @@ class ListViewModel: ObservableObject {
             passwordAttemptRepository: passwordAttemptRepository,
             passwordKeychainRepository: passwordKeychainRepository
         )
-    }
-    
-    @MainActor
-    func getAllPasswords() -> [Password] {
-        return passwordManager.getAllPasswords()
+        
+        password = passwordManager.getPassword(withID: id)!
+        passwordKC = passwordManager.getPasswordKeychain(withID: id)!
+        passwordAttempts = passwordManager.getPasswordAttempts(passwordID: id)
     }
     
     @MainActor
@@ -47,13 +51,8 @@ class ListViewModel: ObservableObject {
     }
     
     @MainActor
-    func createPassword(name: String, value: String) {
-        passwordManager.createPassword(name: name, value: value)
-        passwords = getAllPasswords()
-    }
-    
-    @MainActor
-    func deletePassword(_ password: Password) {
-        let success = passwordManager.deletePassword(password)
+    func createPasswordAttempt(isSuccessful: Bool, typingTime: Double) {
+        passwordManager.createPasswordAttempt(passwordID: password.id, isSuccessful: isSuccessful, typingTime: typingTime)
+        passwordAttempts = passwordManager.getPasswordAttempts(passwordID: password.id)
     }
 }

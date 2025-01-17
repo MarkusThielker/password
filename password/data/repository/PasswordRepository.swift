@@ -9,10 +9,6 @@ import Foundation
 import SwiftUICore
 import SwiftData
 
-enum PasswordRepositoryError: Error {
-    case notFound
-}
-
 class PasswordRepository {
     
     private let context: ModelContext

@@ -9,47 +9,61 @@ import SwiftUI
 
 struct DetailView: View {
     
-    let password: Password
-    let passwordKC: PasswordKC
+    @ObservedObject var viewModel: DetailViewModel
     
-    @State var value: String = ""
-
-    func validateInput(input: String, password: Password) -> Bool {
-        return input == passwordKC.value
+    @State private var startTime: Date?
+    @State private var elapsedTime: Double = -1
+    @State private var value: String = ""
+    
+    init(viewModel: DetailViewModel) {
+        self.viewModel = viewModel
     }
-    
+        
+    func validateInput(input: String, password: Password) -> Bool {
+        return input == viewModel.passwordKC.value
+    }
+
     var body: some View {
         VStack {
-            Text("Enter the password for \(password.name)")
+            Text("Enter the password for \(viewModel.password.name) and submit with \"Enter\"")
             Form {
                 SecureField("", text: $value)
-                Button("Submit") {
-                    let correct = validateInput(input: value, password: password)
-                    
-                    if (correct) {
-                        let alert = NSAlert()
-                        alert.messageText = "Correct"
-                        alert.informativeText = "That one was correct!"
-                        alert.addButton(withTitle: "Let's go!")
-                        alert.runModal()
-                    } else {
-                        let alert = NSAlert()
-                        alert.messageText = "Not quite"
-                        alert.informativeText = " That one was not quite right! Try again!"
-                        alert.addButton(withTitle: "Okay")
-                        alert.runModal()
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .onChange(of: value) { _, _ in
+                        if (value.isEmpty){
+                            startTime = nil
+                        } else if startTime == nil {
+                            startTime = Date()
+                        }
                     }
-                    
-                    value = ""
-                }
+                    .onSubmit {
+                        if let startTime = startTime {
+                            elapsedTime = Date().timeIntervalSince(startTime)
+                        }
+                        
+                        let isSuccessful = validateInput(input: value, password: viewModel.password)
+                        viewModel.createPasswordAttempt(isSuccessful: isSuccessful, typingTime: elapsedTime)
+                        
+                        if isSuccessful {
+                            let alert = NSAlert()
+                            alert.messageText = "Correct"
+                            alert.informativeText = "That one was correct!"
+                            alert.addButton(withTitle: "Let's go!")
+                            alert.runModal()
+                        } else {
+                            let alert = NSAlert()
+                            alert.messageText = "Not quite"
+                            alert.informativeText = " That one was not quite right! Try again!"
+                            alert.addButton(withTitle: "Okay")
+                            alert.runModal()
+                        }
+                        
+                        value = ""
+                        startTime = nil
+                        elapsedTime = -1
+                    }
             }
         }
         .padding()
     }
-}
-
-#Preview {
-    let password = Password(name: "macbook")
-    let passwordKC = PasswordKC(id: password.id, value: "admin")
-    DetailView(password: password, passwordKC: passwordKC)
 }
