@@ -18,7 +18,7 @@ struct passwordApp: App {
         var error: NSError?
 
         if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            let reason = "This app displays passwords in clear text. Please authenticate using Touch ID or Face ID."
+            let reason = "keep your secrets safe"
 
             context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, authenticationError in
                 if success {
@@ -34,7 +34,7 @@ struct passwordApp: App {
     
     func fallBackToPasscode() {
         let context = LAContext()
-        let reason = "This app displays passwords in clear text. Please authenticate using your passcode."
+        let reason = "keep your secrets safe"
 
         context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason) { success, authenticationError in
             if success {
