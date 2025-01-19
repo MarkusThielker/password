@@ -63,6 +63,15 @@ struct DetailView: View {
                         elapsedTime = -1
                     }
             }
+            HStack {
+                Spacer()
+                Text("Attempts: \(viewModel.statistics.totalCount)")
+                Spacer()
+                Text("Successful: \(viewModel.statistics.successCount) (\(viewModel.statistics.successRate, specifier: "%.2f")%)")
+                Spacer()
+                Text("Avg. time: \(viewModel.statistics.averageTime, specifier: "%.2f")s")
+                Spacer()
+            }
         }
         .padding()
     }

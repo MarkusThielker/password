@@ -8,6 +8,13 @@
 import Foundation
 import SwiftData
 
+struct PasswordAttemptStatistics {
+    let totalCount: Int
+    let successCount: Int
+    let successRate: Double
+    let averageTime: Double
+}
+
 class DetailViewModel: ObservableObject {
         
     let passwordID: UUID
@@ -18,6 +25,29 @@ class DetailViewModel: ObservableObject {
     @Published var password: Password
     @Published var passwordKC: PasswordKC
     @Published var passwordAttempts: [PasswordAttempt]
+    
+    var statistics: PasswordAttemptStatistics {
+        guard !passwordAttempts.isEmpty else {
+            return PasswordAttemptStatistics(
+                totalCount: 0,
+                successCount: 0,
+                successRate: 0.00,
+                averageTime: 0.00
+            )
+        }
+
+        let totalCount = passwordAttempts.count
+        let successCount = passwordAttempts.filter { $0.isSuccessful }.count
+        let successRate = Double(successCount) / Double(totalCount) * 100
+        let averageTime = passwordAttempts.count > 0 ? passwordAttempts.reduce(0) { $0 + $1.typingTime } / Double(passwordAttempts.count) : 0
+
+        return PasswordAttemptStatistics(
+            totalCount: totalCount,
+            successCount: successCount,
+            successRate: successRate,
+            averageTime: averageTime
+        )
+    }
 
     @MainActor
     init(context: ModelContext, passwordID id: UUID) {
