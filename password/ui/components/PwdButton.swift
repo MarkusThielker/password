@@ -97,3 +97,33 @@ enum ButtonSize {
         }
     }
 }
+
+#Preview {
+    VStack {
+        
+        PwdButton(
+            label: Text("Click me!"),
+            variant: .primary,
+            action: {}
+        )
+        
+        PwdButton(
+            label: Text("Click me!"),
+            variant: .secondary,
+            action: {}
+        )
+        
+        PwdButton(
+            label: Text("Click me!"),
+            variant: .outline,
+            action: {}
+        )
+        
+        PwdButton(
+            label: Text("Click me!"),
+            variant: .ghost,
+            action: {}
+        )
+        
+    }.padding()
+}
