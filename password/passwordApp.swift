@@ -59,7 +59,9 @@ struct passwordApp: App {
                 }
             }
             .onAppear {
-                authenticate()
+                #if !DEBUG
+                    authenticate()
+                #endif
             }
         }
         .modelContainer(for: [Password.self, PasswordAttempt.self])
