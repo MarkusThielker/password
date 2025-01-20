@@ -51,9 +51,11 @@ struct passwordApp: App {
                 if isAuthenticated {
                     ContextWrapper()
                 } else {
-                    Button("Authenticate") {
-                        authenticate()
-                    }
+                    PwdButton(
+                        label: Text("Authenticate"),
+                        variant: .primary,
+                        action: authenticate
+                    )
                 }
             }
             .onAppear {
