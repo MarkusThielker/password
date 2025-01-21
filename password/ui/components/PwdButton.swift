@@ -17,21 +17,19 @@ struct PwdButton<Label: View>: View {
     var action: () -> Void
 
     var body: some View {
-        HStack {
+        Button(action: action) {
             label
         }
-        .padding(size.padding)
-        .background(variant.backgroundColor(colorScheme))
-        .foregroundColor(variant.foregroundColor(colorScheme))
-        .font(size.font)
-        .cornerRadius(size.cornerRadius)
-        .overlay(
-            RoundedRectangle(cornerRadius: size.cornerRadius)
-                .stroke(variant.borderColor(colorScheme), lineWidth: variant.borderWidth)
-        )
-        .onTapGesture {
-            action()
-        }
+            .buttonStyle(PlainButtonStyle())
+            .padding(size.padding)
+            .background(variant.backgroundColor(colorScheme))
+            .foregroundColor(variant.foregroundColor(colorScheme))
+            .font(size.font)
+            .cornerRadius(size.cornerRadius)
+            .overlay(
+                RoundedRectangle(cornerRadius: size.cornerRadius)
+                    .stroke(variant.borderColor(colorScheme), lineWidth: variant.borderWidth)
+            )
     }
 }
 
