@@ -28,7 +28,7 @@ struct DetailView: View {
             Text("Enter the password for \(viewModel.password.name) and submit with \"Enter\"")
             Form {
                 SecureField("", text: $value)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .textFieldStyle(PwdTextFieldStyle())
                     .onChange(of: value) { _, _ in
                         if (value.isEmpty){
                             startTime = nil
