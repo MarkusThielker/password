@@ -71,13 +71,14 @@ enum ButtonVariant {
 }
 
 enum ButtonSize {
-    case small, medium, large
+    case small, medium, large, icon
 
     var padding: EdgeInsets {
         switch self {
-        case .small: return EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
-        case .medium: return EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16)
-        case .large: return EdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20)
+            case .small: return EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
+            case .medium: return EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16)
+            case .large: return EdgeInsets(top: 12, leading: 20, bottom: 12, trailing: 20)
+            case .icon: return EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
         }
     }
 
@@ -86,6 +87,7 @@ enum ButtonSize {
         case .small: return .caption
         case .medium: return .body
         case .large: return .title3
+        case .icon: return .body
         }
     }
 
@@ -94,6 +96,7 @@ enum ButtonSize {
         case .small: return 6
         case .medium: return 8
         case .large: return 10
+        case .icon: return 8
         }
     }
 }
@@ -122,6 +125,13 @@ enum ButtonSize {
         PwdButton(
             label: Text("Click me!"),
             variant: .ghost,
+            action: {}
+        )
+        
+        PwdButton(
+            label: Image(systemName: "plus"),
+            variant: .primary,
+            size: .icon,
             action: {}
         )
         
