@@ -15,8 +15,9 @@ struct ListView: View {
     
     @ObservedObject var viewModel: ListViewModel
     
-    @State var isAddingPassword: Bool = false
-    @State var selectedItem: UUID?
+    @State private var isAddingPassword: Bool = false
+    @State private var isUpdateTextVisible: Bool = false
+    @State private var selectedItem: UUID?
 
     var body: some View {
         NavigationStack {
@@ -41,6 +42,10 @@ struct ListView: View {
                             size: .icon,
                             action: {
                                 viewModel.passwords = viewModel.getAllPasswords()
+                                isUpdateTextVisible = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                    isUpdateTextVisible = false
+                                }
                             }
                         )
                     }
@@ -57,6 +62,11 @@ struct ListView: View {
                         .background(selectedItem == password.id ? .blue : .clear)
                         .foregroundColor(selectedItem == password.id ? .white : (colorScheme == .dark ? .white : .black))
                         .cornerRadius(8)
+                    }
+                    
+                    if isUpdateTextVisible {
+                        Text("List updated")
+                            .animation(.easeInOut(duration: 1), value: isUpdateTextVisible)
                     }
                 }
                 .frame(width: 250)
