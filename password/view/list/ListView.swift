@@ -62,6 +62,16 @@ struct ListView: View {
                         .background(selectedItem == password.id ? .blue : .clear)
                         .foregroundColor(selectedItem == password.id ? .white : (colorScheme == .dark ? .white : .black))
                         .cornerRadius(8)
+                        .contextMenu {
+                            Button {
+                                selectedItem = nil
+                                viewModel.deletePassword(password)
+                                viewModel.passwords = viewModel.getAllPasswords()
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                            .keyboardShortcut(.delete)
+                        }
                     }
                     
                     if isUpdateTextVisible {
