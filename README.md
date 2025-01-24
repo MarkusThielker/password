@@ -7,6 +7,6 @@ Gamification like success rates, typing time tracking and daily prompts to enter
 ## Security
 An app handling secrets like these has to be implemented securly. That's why:
 
-- Passwords are securly stored in your devices keychain
+- Passwords are securely stored in your devices keychain
 - Authentication is required to enter the app
 - No cloud sync (unless you are using your iCloud Keychain)

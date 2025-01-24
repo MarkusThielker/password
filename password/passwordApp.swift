@@ -51,13 +51,17 @@ struct passwordApp: App {
                 if isAuthenticated {
                     ContextWrapper()
                 } else {
-                    Button("Authenticate") {
-                        authenticate()
-                    }
+                    PwdButton(
+                        label: Text("Authenticate"),
+                        variant: .primary,
+                        action: authenticate
+                    )
                 }
             }
             .onAppear {
-                authenticate()
+                #if !DEBUG
+                    authenticate()
+                #endif
             }
         }
         .modelContainer(for: [Password.self, PasswordAttempt.self])

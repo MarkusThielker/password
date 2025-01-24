@@ -26,7 +26,9 @@ struct AddPasswordView: View {
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
             Form {
                 TextField("Name", text: $name)
+                    .textFieldStyle(PwdTextFieldStyle())
                 TextField("Value", text: $value)
+                    .textFieldStyle(PwdTextFieldStyle())
                 Text("The password will not be visible again later. Make sure to save it somewhere else too!")
                     .font(.footnote)
                 HStack {
