@@ -37,6 +37,16 @@ struct AddPasswordView: View {
                 .font(.footnote)
             HStack {
                 PwdButton(label: Text("Save")) {
+                    
+                    if name.isEmpty || value.isEmpty {
+                        let alert = NSAlert()
+                        alert.messageText = "Missing values"
+                        alert.informativeText = "Make sure to fill in both name and value!"
+                        alert.addButton(withTitle: "Okay")
+                        alert.runModal()
+                        return
+                    }
+                    
                     viewModel.createPassword(name: name, value: value)
                     name = ""
                     value = ""
