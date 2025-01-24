@@ -20,30 +20,44 @@ struct AddPasswordView: View {
         VStack {
             VStack {
                 Text("Add Password")
-                    .font(.headline)
-                Text("Create a new password to learn. It will be encrypted and stored securely.")
+                    .font(.title2)
+                Text("Create a new password to learn.")
+                Text("It will be encrypted and stored securely.")
             }
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+            
             Form {
                 TextField("Name", text: $name)
                     .textFieldStyle(PwdTextFieldStyle())
                 TextField("Value", text: $value)
                     .textFieldStyle(PwdTextFieldStyle())
-                Text("The password will not be visible again later. Make sure to save it somewhere else too!")
-                    .font(.footnote)
-                HStack {
-                    Button("Save") {
-                        viewModel.createPassword(name: name, value: value)
-                        name = ""
-                        value = ""
-                        dismiss()
-                    }
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-                .padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
             }
+            
+            Text("The password will not be visible again later. Make sure to save it somewhere else too!")
+                .font(.footnote)
+            HStack {
+                PwdButton(label: Text("Save")) {
+                    
+                    if name.isEmpty || value.isEmpty {
+                        let alert = NSAlert()
+                        alert.messageText = "Missing values"
+                        alert.informativeText = "Make sure to fill in both name and value!"
+                        alert.addButton(withTitle: "Okay")
+                        alert.runModal()
+                        return
+                    }
+                    
+                    viewModel.createPassword(name: name, value: value)
+                    name = ""
+                    value = ""
+                    dismiss()
+                }
+                PwdButton(label: Text("Cancel"), variant: .outline) {
+                    dismiss()
+                }
+            }
+            .padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
+            
         }.padding(20)
     }
 }
