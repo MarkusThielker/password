@@ -25,7 +25,13 @@ struct DetailView: View {
 
     var body: some View {
         VStack {
-            Text("Enter the password for \(viewModel.password.name) and submit with \"Enter\"")
+            VStack {
+                Text(viewModel.password.name)
+                    .font(.title)
+                    .foregroundColor(.primary)
+                Text("Enter the password and submit with \"Enter\"")
+                    .font(.title3)
+            }
             Form {
                 SecureField("", text: $value)
                     .textFieldStyle(PwdTextFieldStyle())
